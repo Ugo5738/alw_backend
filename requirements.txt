@@ -30,7 +30,7 @@ pytz==2023.3.post1
 sqlparse==0.4.4
 typing_extensions==4.8.0
 tzdata==2023.3
-numpy==1.25.2
+numpy==1.26.2
 langchain==0.0.281
 llama-index==0.8.20
 openai==0.28.0
