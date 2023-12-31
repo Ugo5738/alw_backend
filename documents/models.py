@@ -1,7 +1,6 @@
 from django.db import models
 
 from accounts.models import User
-from projects.models import Project
 
 
 class Document(models.Model):

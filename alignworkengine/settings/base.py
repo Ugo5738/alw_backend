@@ -209,21 +209,6 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": True,
 }
 
-# ==> CELERY
-# Use the actual IP address and port of your Redis server
-REDIS_IP = "redis"
-REDIS_PORT = 6379
-CELERY_BROKER_URL = f"redis://{REDIS_IP}:{REDIS_PORT}/0"
-CELERY_RESULT_BACKEND = f"redis://{REDIS_IP}:{REDIS_PORT}/0"
-CELERY_TIMEZONE = "UTC"
-
-# List of modules to import when the Celery worker starts.
-CELERY_IMPORTS = ("chatbackend.tasks",)
-
-# If using JSON as the serialization format
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
 # ================================ CUSTOM CONFIGS =======================================
 
 # ================================ CUSTOM VARIABLES =======================================

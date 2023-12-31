@@ -68,6 +68,8 @@ STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 #         }
 #     }
 # }
+
+# ==> CHANNELS
 default_channel_layer = {
     "BACKEND": "channels_redis.core.RedisChannelLayer",
     "CONFIG": {
@@ -76,6 +78,22 @@ default_channel_layer = {
 }
 CHANNEL_LAYERS = {"default": default_channel_layer}
 # ================================ REDIS =======================================
+
+
+# ================================ CELERY =======================================
+# Use the actual IP address and port of your Redis server
+CELERY_BROKER_URL = config("REDIS_URL")
+CELERY_RESULT_BACKEND = config("REDIS_URL")
+CELERY_TIMEZONE = "UTC"
+
+# List of modules to import when the Celery worker starts.
+CELERY_IMPORTS = ("alignworkengine.tasks",)
+
+# If using JSON as the serialization format
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+# ================================ CELERY =======================================
 
 
 # ================================ HEROKU =======================================

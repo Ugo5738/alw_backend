@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,6 +18,19 @@ class MeetingListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class MeetingDetailView(APIView):
+    def get_object(self, pk):
+        try:
+            return Meeting.objects.get(pk=pk)
+        except Meeting.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        meeting = self.get_object(pk)
+        serializer = MeetingSerializer(meeting)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
 # [
 #     {
 #         "id": 1,

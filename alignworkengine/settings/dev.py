@@ -4,12 +4,17 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
+# ================================ SUPERUSER =======================================
+USERNAME=config("USERNAME")
+EMAIL=config("EMAIL")
+PASSWORD=config("PASSWORD")
+# ================================ SUPERUSER =======================================
+
 # ================================ DATABASES =======================================
 DATABASES = {
     "default": dj_database_url.config(default="sqlite:///db.sqlite3", conn_max_age=600)
 }
 
-# Database
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -47,6 +52,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 
 # ================================ REDIS/CHANNELS =======================================
+# ==> REDIS
+REDIS_IP = "redis"
+REDIS_PORT = 6379
+
+# ==> CHANNELS
 # CACHES = {
 #     'default': {
 #         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -54,6 +64,22 @@ MEDIA_ROOT = BASE_DIR / "media"
 # }
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 # ================================ REDIS =======================================
+
+
+# ================================ CELERY =======================================
+# Use the actual IP address and port of your Redis server
+CELERY_BROKER_URL = f"redis://{REDIS_IP}:{REDIS_PORT}/0"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_IP}:{REDIS_PORT}/0"
+CELERY_TIMEZONE = "UTC"
+
+# List of modules to import when the Celery worker starts.
+CELERY_IMPORTS = ("alignworkengine.tasks",)
+
+# If using JSON as the serialization format
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+# ================================ CELERY =======================================
 
 
 # ================================ PAYSTACK =======================================

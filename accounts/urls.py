@@ -4,11 +4,8 @@ from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from rest_framework import routers
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView, TokenVerifyView)
 
 from accounts import forms, views
 
@@ -84,7 +81,7 @@ password_urls = [
     ),
 ]
 
-urlpatterns = admin_urls + account_urls + password_urls
+urlpatterns = admin_urls + jwt_urls + account_urls + password_urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

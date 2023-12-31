@@ -4,26 +4,26 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: daphne chatbackend.asgi:application -b 0.0.0.0 -p 8000
+    command: daphne alignworkengine.asgi:application -b 0.0.0.0 -p 8000
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - redis
-    container_name: chat_app
+    container_name: alignwork_chat_app
   
   celery:
     build: 
       context: .
       dockerfile: Dockerfile
-    command: celery -A chatbackend worker --loglevel=info
+    command: celery -A alignworkengine worker --loglevel=info
     volumes:
       - .:/code
     depends_on:
       - redis
-    container_name: chat_app_celery
+    container_name: alignwork_chat_app_celery
     
   redis:
     image: redis:latest
-    container_name: chat_app_redis
+    container_name: alignwork_chat_app_redis
