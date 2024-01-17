@@ -1,0 +1,55 @@
+name: AlignWork Backend CI/CD Pipeline (Staging)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Tests
+      run: |
+        python manage.py test
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+    - name: Build and Push Docker image
+      run: |
+        docker build -t alignwork1/alw:latest .
+        docker tag alignwork1/alw:latest ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
+
+    - name: Deploy to Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
+          docker stop alignwork1/alw || true
+          docker rm alignwork1/alw || true
+          docker run --name alignwork1/alw -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest

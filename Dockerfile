@@ -19,7 +19,8 @@ WORKDIR /code
 COPY . /code/
 
 # Install Python dependencies
-RUN pip install -r requirements.txt
+# RUN pip install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # # Collect static files
 # RUN python manage.py collectstatic --noinput
