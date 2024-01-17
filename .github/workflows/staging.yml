@@ -85,8 +85,8 @@ jobs:
       if: github.ref == 'refs/heads/staging'
       run: |  
         docker build -t alw:staging .
-        docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
+        docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
 
     - name: Deploy to Staging Server
       if: github.ref == 'refs/heads/staging'
@@ -96,7 +96,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
           docker stop alw-staging || true
           docker rm alw-staging || true
-          docker run --name alw-staging -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
+          docker run --name alw-staging -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
