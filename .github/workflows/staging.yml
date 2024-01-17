@@ -96,8 +96,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
-          docker stop alw-staging || true
-          docker rm alw-staging || true
-          docker run --name alw-staging -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
+          scp docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          scp nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'cd /home/ubuntu/alignwork/ && docker-compose down && docker-compose up -d'
