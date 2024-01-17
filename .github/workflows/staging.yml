@@ -3,6 +3,7 @@ name: AlignWork Backend CI/CD Pipeline (Staging)
 on:
   push:
     branches: [ staging ]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -36,20 +37,22 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    - name: Build and Push Docker image
-      run: |
-        docker build -t alignwork1/alw:latest .
-        docker tag alignwork1/alw:latest ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
-        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
+    - name: Build and Push Docker image for Staging
+      if: github.ref == 'refs/heads/staging'
+      run: |  
+        docker build -t alw:staging .
+        docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
 
-    - name: Deploy to Server
+    - name: Deploy to Staging Server
+      if: github.ref == 'refs/heads/staging'
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
-          docker stop alignwork1/alw || true
-          docker rm alignwork1/alw || true
-          docker run --name alignwork1/alw -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/alignwork1/alw:latest
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
+          docker stop alw-staging || true
+          docker rm alw-staging || true
+          docker run --name alw-staging -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/staging/alw:latest
