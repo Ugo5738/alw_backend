@@ -97,7 +97,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          ls -al $GITHUB_WORKSPACE
+          ls -al GITHUB_REPOSITORY
           # cd $GITHUB_WORKSPACE
           # ls -al alignwork
           echo "Current directory: $(pwd)"
