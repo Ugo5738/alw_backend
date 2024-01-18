@@ -88,13 +88,19 @@ jobs:
         docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
 
+    - name: Setup SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+    
     - name: Add SSH Key to Known Hosts
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
     - name: Copy docker-compose.yml to remote server
-      run: scp docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+      run: scp -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
 
     - name: Copy .env to remote server
       run: scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
