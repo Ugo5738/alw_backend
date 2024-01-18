@@ -96,6 +96,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           scp docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           scp nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
