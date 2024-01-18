@@ -87,7 +87,10 @@ jobs:
         docker build -t alw:staging .
         docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
-        
+
+    - name: List files in repository root
+      run: ls -al
+      
     - name: Deploy to Staging Server
       if: github.ref == 'refs/heads/staging'
       uses: appleboy/ssh-action@master
@@ -97,9 +100,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          ls -al $GITHUB_REPOSITORY
-          # cd $GITHUB_WORKSPACE
-          # ls -al alignwork
           echo "Current directory: $(pwd)"
           echo "Transferring docker-compose.yml from $(pwd)/alignwork/docker-compose.yml"
           scp alignwork/docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
