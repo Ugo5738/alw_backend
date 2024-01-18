@@ -87,11 +87,6 @@ jobs:
         docker build -t alw:staging .
         docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
-    
-    - name: Debugging - Print Current Directory and List Files
-      run: |
-        pwd
-        ls -al
         
     - name: Deploy to Staging Server
       if: github.ref == 'refs/heads/staging'
@@ -106,9 +101,9 @@ jobs:
           pwd
           ls -al
           echo "Transferring docker-compose.yml"
-          scp docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          scp alignwork/docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           echo "Transferring .env"
-          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          scp alignwork/.env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           echo "Transferring nginx.conf"
-          scp nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+          scp alignwork/nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'cd /home/ubuntu/alignwork/ && docker-compose down && docker-compose up -d'
