@@ -102,9 +102,6 @@ jobs:
     - name: Copy docker-compose.yml to remote server
       run: scp -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
 
-    - name: Copy .env to remote server
-      run: scp -i ~/.ssh/id_rsa .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-
     - name: Copy nginx.conf to remote server
       run: scp -i ~/.ssh/id_rsa nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
       
