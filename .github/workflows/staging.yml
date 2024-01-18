@@ -83,27 +83,30 @@ jobs:
 
     - name: Build and Push Docker image for Staging
       if: github.ref == 'refs/heads/staging'
+      env:
+        DOCKER_BUILDKIT: 1
       run: |  
         docker build -t alw:staging .
         docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
-    
-    - name: Debugging - Print Current Directory and List Files
+
+    - name: Setup SSH Key and Add to Known Hosts
       run: |
-        pwd
-        ls -al
-        
-    - name: Deploy to Staging Server
-      if: github.ref == 'refs/heads/staging'
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+    - name: Transfer Repository to Remote Server
+      run: rsync -avz -e "ssh -i ~/.ssh/id_rsa" ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+      
+    - name: Execute Docker commands on remote server
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_IP }}
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-          cd $GITHUB_WORKSPACE
-          scp docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-          scp nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'cd /home/ubuntu/alignwork/ && docker-compose down && docker-compose up -d'
+          cd /home/ubuntu/alignwork/
+          docker-compose down
+          docker-compose up -d
