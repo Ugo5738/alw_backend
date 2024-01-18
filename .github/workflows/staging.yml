@@ -87,7 +87,12 @@ jobs:
         docker build -t alw:staging .
         docker tag alw:staging ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/alw:latest
-
+    
+    - name: Debugging - Print Current Directory and List Files
+      run: |
+        pwd
+        ls -al
+        
     - name: Deploy to Staging Server
       if: github.ref == 'refs/heads/staging'
       uses: appleboy/ssh-action@master
