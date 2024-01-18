@@ -98,6 +98,7 @@ jobs:
         script: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           cd $GITHUB_WORKSPACE
+          ls -al alignwork
           echo "Current directory: $(pwd)"
           echo "Transferring docker-compose.yml from $(pwd)/alignwork/docker-compose.yml"
           scp alignwork/docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
