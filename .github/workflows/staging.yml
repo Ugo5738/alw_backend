@@ -98,12 +98,11 @@ jobs:
         script: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           cd $GITHUB_WORKSPACE
-          pwd
-          ls -al
-          echo "Transferring docker-compose.yml"
+          echo "Current directory: $(pwd)"
+          echo "Transferring docker-compose.yml from $(pwd)/alignwork/docker-compose.yml"
           scp alignwork/docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-          echo "Transferring .env"
+          echo "Transferring .env from $(pwd)/alignwork/.env"
           scp alignwork/.env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-          echo "Transferring nginx.conf"
+          echo "Transferring nginx.conf from $(pwd)/alignwork/nginx.conf"
           scp alignwork/nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'cd /home/ubuntu/alignwork/ && docker-compose down && docker-compose up -d'
