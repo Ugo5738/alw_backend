@@ -103,11 +103,11 @@ jobs:
       run: scp -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
 
     - name: Copy .env to remote server
-      run: scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+      run: scp -i ~/.ssh/id_rsa .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
 
     - name: Copy nginx.conf to remote server
-      run: scp nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
-
+      run: scp -i ~/.ssh/id_rsa nginx.conf ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/alignwork/
+      
     - name: Execute Docker commands on remote server
       uses: appleboy/ssh-action@master
       with:
