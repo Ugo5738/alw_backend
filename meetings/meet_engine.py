@@ -12,11 +12,16 @@ from alignworkengine.logging_config import configure_logger
 
 logger = configure_logger(__name__)
 
+
 def authorize() -> Credentials:
     """Ensure valid credentials for calling the Meet REST API."""
-    CLIENT_SECRET_FILE = os.path.join(settings.BASE_DIR, 'gauth', 'secrets', 'transcript_meet_client_secret.json')
-    TOKEN_DIR = os.path.join(settings.BASE_DIR, 'gauth', 'tokens') # Directory for the token
-    TOKEN_FILE = os.path.join(TOKEN_DIR, 'transcript_meet_token.json')
+    CLIENT_SECRET_FILE = os.path.join(
+        settings.BASE_DIR, "gauth", "secrets", "transcript_meet_client_secret.json"
+    )
+    TOKEN_DIR = os.path.join(
+        settings.BASE_DIR, "gauth", "tokens"
+    )  # Directory for the token
+    TOKEN_FILE = os.path.join(TOKEN_DIR, "transcript_meet_token.json")
     credentials = None
 
     if not os.path.exists(TOKEN_DIR):
@@ -29,8 +34,9 @@ def authorize() -> Credentials:
         flow = InstalledAppFlow.from_client_secrets_file(
             CLIENT_SECRET_FILE,
             scopes=[
-                'https://www.googleapis.com/auth/meetings.space.created',
-            ])
+                "https://www.googleapis.com/auth/meetings.space.created",
+            ],
+        )
         flow.run_local_server(port=0)
         credentials = flow.credentials
 
@@ -42,6 +48,7 @@ def authorize() -> Credentials:
             f.write(credentials.to_json())
 
     return credentials
+
 
 USER_CREDENTIALS = authorize()
 
@@ -57,7 +64,7 @@ def subscribe_to_space(space_name: str = None, topic_name: str = None):
     """Subscribe to events for a given meeting space."""
     session = requests.AuthorizedSession(USER_CREDENTIALS)
     body = {
-        'targetResource': f"//meet.googleapis.com/{space_name}",
+        "targetResource": f"//meet.googleapis.com/{space_name}",
         "eventTypes": [
             "google.workspace.meet.conference.v2.started",
             "google.workspace.meet.conference.v2.ended",
@@ -69,12 +76,12 @@ def subscribe_to_space(space_name: str = None, topic_name: str = None):
         "payloadOptions": {
             "includeResource": False,
         },
-        "notificationEndpoint": {
-            "pubsubTopic": topic_name
-        },
+        "notificationEndpoint": {"pubsubTopic": topic_name},
         "ttl": "86400s",
     }
-    response = session.post("https://workspaceevents.googleapis.com/v1beta/subscriptions", json=body)
+    response = session.post(
+        "https://workspaceevents.googleapis.com/v1beta/subscriptions", json=body
+    )
     return response
 
 
@@ -98,8 +105,8 @@ def fetch_participant_from_session(session_name: str) -> meet.Participant:
     # Use the parent path of the session to fetch the participant details
     parsed_session_path = client.parse_participant_session_path(session_name)
     participant_resource_name = client.participant_path(
-        parsed_session_path["conference_record"],
-        parsed_session_path["participant"])
+        parsed_session_path["conference_record"], parsed_session_path["participant"]
+    )
     return client.get_participant(name=participant_resource_name)
 
 
@@ -109,7 +116,9 @@ def on_conference_started(message: pubsub_v1.subscriber.message.Message):
     resource_name = payload.get("conferenceRecord").get("name")
     client = meet.ConferenceRecordsServiceClient(credentials=USER_CREDENTIALS)
     conference = client.get_conference_record(name=resource_name)
-    logger(f"Conference (ID {conference.name}) started at {conference.start_time.rfc3339()}")
+    logger(
+        f"Conference (ID {conference.name}) started at {conference.start_time.rfc3339()}"
+    )
 
 
 def on_conference_ended(message: pubsub_v1.subscriber.message.Message):
@@ -118,7 +127,9 @@ def on_conference_ended(message: pubsub_v1.subscriber.message.Message):
     resource_name = payload.get("conferenceRecord").get("name")
     client = meet.ConferenceRecordsServiceClient(credentials=USER_CREDENTIALS)
     conference = client.get_conference_record(name=resource_name)
-    logger(f"Conference (ID {conference.name}) ended at {conference.end_time.rfc3339()}")
+    logger(
+        f"Conference (ID {conference.name}) ended at {conference.end_time.rfc3339()}"
+    )
 
 
 def on_participant_joined(message: pubsub_v1.subscriber.message.Message):
@@ -195,17 +206,14 @@ def listen_for_events(subscription_name: str = None):
     logger("Done")
 
 
-space = create_space()
-logger(f"Join the meeting at {space.meeting_uri}")
+# space = create_space()
+# logger(f"Join the meeting at {space.meeting_uri}")
 
-TOPIC_NAME = "projects/er-dev-396522/topics/workspace-events"
-SUBSCRIPTION_NAME = "projects/er-dev-396522/subscriptions/workspace-events-sub"
+# TOPIC_NAME = "projects/er-dev-396522/topics/workspace-events"
+# SUBSCRIPTION_NAME = "projects/er-dev-396522/subscriptions/workspace-events-sub"
 
-subscription = subscribe_to_space(topic_name=TOPIC_NAME, space_name=space.name)
-listen_for_events(subscription_name=SUBSCRIPTION_NAME)
-
-
+# subscription = subscribe_to_space(topic_name=TOPIC_NAME, space_name=space.name)
+# listen_for_events(subscription_name=SUBSCRIPTION_NAME)
 
 
 # "google-meet-service-account@er-dev-396522.iam.gserviceaccount.com"
-
