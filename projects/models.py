@@ -38,6 +38,11 @@ class Project(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Project"
-        verbose_name_plural = "Projects"
+        verbose_name = _("Project")
+        verbose_name_plural = _("Projects")
         ordering = ["-start_date", "name"]
+        permissions = [
+            ("create_project", "Can create projects"),
+            ("edit_project", "Can edit projects"),
+            ("add_member", "Can add new members"),
+        ]
