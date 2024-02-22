@@ -93,7 +93,6 @@ class OrganizationProfile(TrackingModel):
         verbose_name_plural = "Organizations"
 
 
-# DELETE THIS AS IT IS NOT NEEDED
 class OrganizationCustomer(TrackingModel):
     organization = models.ForeignKey(OrganizationProfile, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

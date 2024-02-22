@@ -2,10 +2,10 @@ version: "3"
 
 services:
   web:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    image: alignwork1/alw:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: alignwork1/alw:latest
     command: daphne alignworkengine.asgi:application -b 0.0.0.0 -p 8000
     volumes:
       - .:/code
@@ -15,10 +15,10 @@ services:
     container_name: alw_app
 
   celery:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    image: alignwork1/alw:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: alignwork1/alw:latest
     command: celery -A alignworkengine worker --loglevel=info
     volumes:
       - .:/code

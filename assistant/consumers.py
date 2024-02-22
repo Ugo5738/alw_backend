@@ -77,14 +77,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 # self.user = await database_sync_to_async(User.objects.get)(id=self.user_id)
 
-                (
-                    bot_response,
-                    citations,
-                    message_id,
-                ) = await self.chat_engine.handle_chat(self.thread_id, user_message)
-                self.conversation_memory.add_message(
-                    "user", user_message, message_id=message_id
-                )
+                response = "message"
 
                 stop = time.time()
                 duration = stop - start
@@ -96,8 +89,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     {
                         "type": "chat_message",
-                        "message": bot_response,
-                        "citations": citations,
+                        "message": response,
                         "messageId": message_id,
                     },
                 )
@@ -114,11 +106,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             elif message_type == "end_session":
                 self.username_id = text_data_json.get("userId")
-                self.email = text_data_json.get("email")
-                self.name = text_data_json.get("name")
-                self.role = text_data_json.get("role")
-                self.user_detail = [self.username_id, self.email, self.name, self.role]
-                await self.end_conversation()
 
                 # Send message to room group
                 await self.channel_layer.group_send(
@@ -155,18 +142,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send message to WebSocket
         await self.send(text_data=json_message)
-
-    async def end_conversation(self):
-        # self.conversation = await database_sync_to_async(Conversation.objects.create)()
-        self.conversation_memory.session_end_time = datetime.now()
-        conversation_memory_dict = self.conversation_memory.to_dict()
-        save_conversation.apply_async(
-            args=[
-                conversation_memory_dict,
-                str(self.thread_id),
-                self.user_detail,
-                "learn",
-            ]
-        )
 
         return "Done!"

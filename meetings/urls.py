@@ -6,8 +6,14 @@ from meetings import views
 router = DefaultRouter()
 
 urlpatterns = [
-    path('meetings-list/', views.MeetingListView.as_view(), name='meeting_list'),
-    path('meeting-event/<int:pk>/', views.MeetingDetailView.as_view(), name='meeting_detail'),
+    path("meetings-list/", views.MeetingListView.as_view(), name="meeting_list"),
+    path(
+        "meeting-event/<int:pk>/",
+        views.MeetingDetailView.as_view(),
+        name="meeting_detail",
+    ),
+    # notification from google calendar
+    path("notifications/", views.notifications, name="notifications"),
 ]
 
 # [
