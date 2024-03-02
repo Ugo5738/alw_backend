@@ -3,12 +3,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
-from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
-                                   SpectacularSwaggerView)
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
+
+from meetings import views as meeting_views
 
 router = DefaultRouter()
 
@@ -66,11 +71,17 @@ swagger_urlpatterns = [
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
 
+gauth_urlpatterns = [
+    path("google-login/", meeting_views.GoogleLogin.as_view(), name="google-login"),
+    path("oauth2callback/", meeting_views.oauth2callback, name="oauth2callback"),
+]
+
 urlpatterns = (
     default_urlpatterns
     + custom_urlpatterns
     + spectacular_urlpatterns
     + swagger_urlpatterns
+    + gauth_urlpatterns
 )
 
 if settings.DEBUG:

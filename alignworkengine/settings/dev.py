@@ -5,9 +5,9 @@ ALLOWED_HOSTS = ["*"]
 
 
 # ================================ SUPERUSER =======================================
-USERNAME=config("USERNAME")
-EMAIL=config("EMAIL")
-PASSWORD=config("PASSWORD")
+USERNAME = config("USERNAME")
+EMAIL = config("EMAIL")
+PASSWORD = config("PASSWORD")
 # ================================ SUPERUSER =======================================
 
 # ================================ DATABASES =======================================
@@ -86,3 +86,9 @@ CELERY_RESULT_SERIALIZER = "json"
 # PAYSTACK_PUBLIC_KEY=config("PAYSTACK_TEST_PUBLIC_KEY")
 # PAYSTACK_SECRET_KEY=config("PAYSTACK_TEST_SECRET_KEY")
 # ================================ PAYSTACK =======================================
+
+
+# ================================ GOOGLE OAUTH CALLBACK =======================================
+# WARNING: Only use this for local development! Remove it in production settings.
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+# ================================ GOOGLE OAUTH CALLBACK =======================================

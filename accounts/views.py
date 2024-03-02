@@ -10,13 +10,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.models import OrganizationCustomer, User
+from accounts.models import User
 from accounts.pagination import CustomPageNumberPagination
-from accounts.serializers import (
-    ChangePasswordSerializer,
-    RegisterSerializer,
-    UserSerializer,
-)
+from accounts.serializers import (ChangePasswordSerializer, RegisterSerializer,
+                                  UserSerializer)
 
 # LoginSerializer,
 
@@ -163,10 +160,11 @@ class UserListView(ListView):
 # DELETE THIS AS IT IS NOT NEEDED
 class OrganizationCustomerListView(ListView):
     template_name = "clarify/users.html"
-    queryset = OrganizationCustomer.objects.all()
+    queryset = User.objects.all()
 
     # If you need to pass additional context data to the template
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add extra context variables if needed
         return context
+

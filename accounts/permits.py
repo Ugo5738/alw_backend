@@ -24,8 +24,8 @@ def create_groups_with_permissions():
     founders_group.save()
 
 
-# Call this function to set up your groups and permissions
-create_groups_with_permissions()
+# # Call this function to set up your groups and permissions
+# create_groups_with_permissions()
 
 
 # user = User.objects.get(username='new_member')

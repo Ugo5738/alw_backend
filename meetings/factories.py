@@ -1,3 +1,4 @@
+import datetime
 import random
 
 import factory
@@ -13,16 +14,18 @@ class MeetingFactory(factory.django.DjangoModelFactory):
         model = Meeting
 
     project = factory.SubFactory(ProjectFactory)
-    title = factory.Faker('sentence', nb_words=4)
-    scheduled_time = factory.Faker('future_datetime', tzinfo=timezone.utc)
-    duration = factory.LazyFunction(lambda: random.randint(30, 180))  # Duration in minutes
-    agenda = factory.Faker('text')
-    notes = factory.Faker('text')
-    outcomes = factory.Faker('text')
-    location = factory.Faker('address')
+    title = factory.Faker("sentence", nb_words=4)
+    scheduled_time = factory.Faker("future_datetime", tzinfo=datetime.timezone.utc)
+    duration = factory.LazyFunction(
+        lambda: random.randint(30, 180)
+    )  # Duration in minutes
+    agenda = factory.Faker("text")
+    notes = factory.Faker("text")
+    outcomes = factory.Faker("text")
+    location = factory.Faker("address")
     created_by = factory.SubFactory(UserFactory)
     created_at = factory.LazyFunction(timezone.now)
-    access_level = factory.Iterator(['read', 'write', 'edit'])
+    access_level = factory.Iterator(["read", "write", "edit"])
 
     @factory.post_generation
     def participants(self, create, extracted, **kwargs):

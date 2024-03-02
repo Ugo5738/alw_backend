@@ -3,9 +3,11 @@ from rest_framework.routers import DefaultRouter
 
 from meetings import views
 
+urlpatterns = []
 router = DefaultRouter()
 
 urlpatterns = [
+    # meetings
     path("meetings-list/", views.MeetingListView.as_view(), name="meeting_list"),
     path(
         "meeting-event/<int:pk>/",
@@ -13,7 +15,7 @@ urlpatterns = [
         name="meeting_detail",
     ),
     # notification from google calendar
-    path("notifications/", views.notifications, name="notifications"),
+    # path("notifications/", views.notifications, name="notifications"),
 ]
 
 # [

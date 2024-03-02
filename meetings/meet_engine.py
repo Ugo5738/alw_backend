@@ -8,7 +8,7 @@ from google.cloud import pubsub_v1
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
-from alignworkengine.logging_config import configure_logger
+from alignworkengine.configs.logging_config import configure_logger
 
 logger = configure_logger(__name__)
 

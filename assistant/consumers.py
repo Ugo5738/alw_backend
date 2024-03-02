@@ -9,7 +9,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
 
 from accounts.models import User
-from alignworkengine.logging_config import configure_logger
+from alignworkengine.configs.logging_config import configure_logger
 from assistant.engine import OpenAIChatEngine
 from assistant.memory import BaseMemory
 from assistant.tasks import save_conversation

@@ -8,7 +8,7 @@ from django.conf import settings
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
-from alignworkengine.logging_config import configure_logger
+from alignworkengine.configs.logging_config import configure_logger
 
 logger = configure_logger(__name__)
 
