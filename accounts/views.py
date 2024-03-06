@@ -1,5 +1,9 @@
 import jwt
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, ListView, View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, status, viewsets
@@ -10,12 +14,72 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.models import User
+from accounts.google_auth import exchange_code, generate_auth_url
+from accounts.models import GoogleCredentials, User
 from accounts.pagination import CustomPageNumberPagination
-from accounts.serializers import (ChangePasswordSerializer, RegisterSerializer,
-                                  UserSerializer)
+from accounts.serializers import (
+    ChangePasswordSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
+from accounts.utils import create_user_webhook_subscription
 
 # LoginSerializer,
+
+
+# ========================== GOOGLE AUTHENTICATION ==========================
+# View to redirect user to Google's OAuth 2.0 server
+class GoogleLogin(APIView):
+    def get(self, request, *args, **kwargs):
+        authorization_url = generate_auth_url(request)
+        return redirect(authorization_url)
+
+
+# View to handle the OAuth 2.0 server response
+@login_required
+def oauth2callback(request):
+    from accounts.models import User
+
+    credentials = exchange_code(request)
+
+    # Assuming the user is already authenticated and available in the session
+    # user = request.user
+    user = User.objects.get(email="iamwriterkoda@gmail.com")
+    print("This is the logged in user: ", user)
+    # Save or update the credentials in the database
+    GoogleCredentials.objects.update_or_create(
+        user=user,
+        defaults={
+            "access_token": credentials.token,
+            "refresh_token": credentials.refresh_token,
+            "token_expiry": credentials.expiry,
+            "token_uri": credentials.token_uri,
+            "client_id": credentials.client_id,
+            "client_secret": credentials.client_secret,
+            "scopes": ",".join(credentials.scopes),
+        },
+    )
+
+    create_user_webhook_subscription(user)
+
+    # Redirect or return a success response
+    return JsonResponse(
+        {"message": "Google Calendar authentication successful"},
+        status=status.HTTP_200_OK,
+    )
+
+
+@csrf_exempt
+def google_notification(request):
+    if request.method == "POST":
+        # Process the notification
+        print("Received notification from Google:", request.body)
+        # Respond with 200 OK to acknowledge receipt of the notification
+        return HttpResponse(status=200)
+    return HttpResponse(status=405)  # Method not allowed if not a POST request
+
+
+# ========================== GOOGLE AUTHENTICATION ==========================
 
 
 class RegisterAPIView(GenericAPIView):
@@ -167,4 +231,3 @@ class OrganizationCustomerListView(ListView):
         context = super().get_context_data(**kwargs)
         # Add extra context variables if needed
         return context
-

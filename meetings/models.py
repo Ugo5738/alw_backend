@@ -5,20 +5,6 @@ from accounts.models import User
 from projects.models import Project
 
 
-class GoogleCredentials(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    access_token = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255)
-    token_expiry = models.DateTimeField()
-    token_uri = models.CharField(max_length=255)
-    client_id = models.CharField(max_length=255)
-    client_secret = models.CharField(max_length=255)
-    scopes = models.TextField()
-
-    def __str__(self):
-        return self.user.username
-
-
 class Meeting(models.Model):
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name="meetings"

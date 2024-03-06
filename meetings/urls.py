@@ -14,8 +14,6 @@ urlpatterns = [
         views.MeetingDetailView.as_view(),
         name="meeting_detail",
     ),
-    # notification from google calendar
-    # path("notifications/", views.notifications, name="notifications"),
 ]
 
 # [

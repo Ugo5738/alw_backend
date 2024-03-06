@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -69,8 +71,8 @@ class User(AbstractUser, TrackingModel):
         return "{}".format(self.email)
 
     class Meta:
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
+        verbose_name = _("User")
+        verbose_name_plural = _("Users")
 
 
 class OrganizationProfile(TrackingModel):
@@ -93,3 +95,35 @@ class OrganizationProfile(TrackingModel):
     class Meta:
         verbose_name = _("Organization")
         verbose_name_plural = _("Organizations")
+
+
+class GoogleCredentials(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="google_credentials"
+    )
+    access_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255)
+    token_expiry = models.DateTimeField()
+    token_uri = models.CharField(max_length=255)
+    client_id = models.CharField(max_length=255)
+    client_secret = models.CharField(max_length=255)
+    scopes = models.TextField()
+
+    def __str__(self):
+        return self.user.email  # Assuming email is the primary identifier for users
+
+    class Meta:
+        verbose_name = _("Google Credential")
+        verbose_name_plural = _("Google Credentials")
+
+
+class GoogleCalendarChannel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    channel_id = models.CharField(max_length=255, default=uuid.uuid4, editable=False)
+    resource_id = models.CharField(max_length=255, blank=True)
+    expiration = models.DateTimeField(null=True, blank=True)
+    verification_token = models.CharField(max_length=255, blank=True)
+    resource_uri = models.URLField(max_length=255, blank=True)
+
+    def __str__(self):
+        return f"Channel {self.channel_id} for {self.user}"

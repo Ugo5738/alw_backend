@@ -13,7 +13,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 
-from meetings import views as meeting_views
+from accounts import views as accounts_views
 
 router = DefaultRouter()
 
@@ -72,8 +72,13 @@ swagger_urlpatterns = [
 ]
 
 gauth_urlpatterns = [
-    path("google-login/", meeting_views.GoogleLogin.as_view(), name="google-login"),
-    path("oauth2callback/", meeting_views.oauth2callback, name="oauth2callback"),
+    path("google-login/", accounts_views.GoogleLogin.as_view(), name="google-login"),
+    path("oauth2callback/", accounts_views.oauth2callback, name="oauth2callback"),
+    path(
+        "notifications/google/",
+        accounts_views.google_notification,
+        name="google-notification",
+    ),
 ]
 
 urlpatterns = (
