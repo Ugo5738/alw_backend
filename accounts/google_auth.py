@@ -1,6 +1,11 @@
 from django.utils import timezone
 from google_auth_oauthlib.flow import Flow
 
+from alignworkengine.configs.logging_config import configure_logger
+
+logger = configure_logger(__name__)
+
+
 # Replace these with your client's information
 CLIENT_SECRETS_FILE = "keys/gauth/secrets/cal_api_client_secret.json"
 SCOPES = [
@@ -38,10 +43,18 @@ def exchange_code(request):
     flow.fetch_token(authorization_response=request.build_absolute_uri())
     credentials = flow.credentials
 
-    if hasattr(credentials, "expiry") and credentials.expiry:
-        expiry_time = timezone.make_aware(credentials.expiry)
-        seconds_until_expiry = (expiry_time - timezone.now()).total_seconds()
-        print(f"Token expires in {seconds_until_expiry} seconds.")
-        # Here you can handle the token refresh based on expiry time
-
+    logger.info(f"Access Token: {credentials.token}")
+    if credentials.refresh_token:
+        logger.info(f"Refresh Token: {credentials.refresh_token}")
     return credentials
+
+
+# def credentials_to_dict(credentials):
+#     return {
+#         "token": credentials.token,
+#         "refresh_token": credentials.refresh_token,
+#         "token_uri": credentials.token_uri,
+#         "client_id": credentials.client_id,
+#         "client_secret": credentials.client_secret,
+#         "scopes": credentials.scopes,
+#     }

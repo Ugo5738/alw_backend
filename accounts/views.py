@@ -1,9 +1,11 @@
 import jwt
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, ListView, View
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, status, viewsets
@@ -22,28 +24,31 @@ from accounts.serializers import (
     RegisterSerializer,
     UserSerializer,
 )
-from accounts.utils import create_user_webhook_subscription
+from accounts.utils import (
+    create_user_webhook_subscription,
+    get_google_calendar_service,
+    get_user_from_channel_id,
+)
+from alignworkengine.configs.logging_config import configure_logger
 
-# LoginSerializer,
+logger = configure_logger(__name__)
 
 
 # ========================== GOOGLE AUTHENTICATION ==========================
 # View to redirect user to Google's OAuth 2.0 server
-class GoogleLogin(APIView):
+class GoogleLogin(LoginRequiredMixin, APIView):
     def get(self, request, *args, **kwargs):
         authorization_url = generate_auth_url(request)
         return redirect(authorization_url)
 
 
 # View to handle the OAuth 2.0 server response
-@login_required
 def oauth2callback(request):
-    from accounts.models import User
-
     credentials = exchange_code(request)
 
     # Assuming the user is already authenticated and available in the session
-    # user = request.user
+    user = request.user
+    print("This is the first logged in user: ", user)
     user = User.objects.get(email="iamwriterkoda@gmail.com")
     print("This is the logged in user: ", user)
     # Save or update the credentials in the database
@@ -70,13 +75,42 @@ def oauth2callback(request):
 
 
 @csrf_exempt
+@require_POST  # Ensure that this view only accepts POST requests
 def google_notification(request):
-    if request.method == "POST":
-        # Process the notification
-        print("Received notification from Google:", request.body)
-        # Respond with 200 OK to acknowledge receipt of the notification
-        return HttpResponse(status=200)
-    return HttpResponse(status=405)  # Method not allowed if not a POST request
+    # Extracting Google Calendar API notification headers
+    channel_id = request.headers.get("X-Goog-Channel-ID")
+    resource_state = request.headers.get("X-Goog-Resource-State")
+    message_number = request.headers.get("X-Goog-Message-Number")
+    resource_id = request.headers.get("X-Goog-Resource-ID")
+    resource_uri = request.headers.get("X-Goog-Resource-URI")
+
+    # Optionally, log the received information for debugging
+    logger.info(
+        f"Received notification - Channel ID: {channel_id}, State: {resource_state}, "
+        f"Message Number: {message_number}, Resource ID: {resource_id}, Resource URI: {resource_uri}"
+    )
+
+    # Fetch the event details if the notification indicates a change in a specific event
+    if resource_state in ["sync", "exists"]:
+        # Assume you have a function to get the user associated with this channel
+        user = get_user_from_channel_id(channel_id)
+        if user:
+            service = get_google_calendar_service(user)
+            # The actual ID of the calendar, 'primary' is used for the primary calendar of an account
+            calendar_id = user.email  # "primary"
+            try:
+                event = (
+                    service.events()
+                    .get(calendarId=calendar_id, eventId=resource_id)
+                    .execute()
+                )
+                print("Event details:", event)
+                # Process the event details as needed
+            except Exception as e:
+                print("Error fetching event details:", str(e))
+                # Handle errors (e.g., event not found or API error)
+
+    return HttpResponse(status=200)
 
 
 # ========================== GOOGLE AUTHENTICATION ==========================

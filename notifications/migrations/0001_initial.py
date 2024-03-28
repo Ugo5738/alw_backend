@@ -9,12 +9,13 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ("projects", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Document",
+            name="Notification",
             fields=[
                 (
                     "id",
@@ -26,45 +27,52 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("title", models.CharField(max_length=255)),
-                ("content", models.TextField()),
-                ("document_type", models.CharField(max_length=100)),
-                ("creation_date", models.DateField(auto_now_add=True)),
-                ("last_modified", models.DateTimeField(auto_now=True)),
-                ("status", models.CharField(max_length=100)),
-                ("is_template", models.BooleanField(default=False)),
+                ("message", models.TextField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("read", models.BooleanField(default=False)),
+                ("notification_type", models.CharField(max_length=100)),
                 (
-                    "access_level",
+                    "category",
                     models.CharField(
                         choices=[
-                            ("read", "Read"),
-                            ("write", "Write"),
-                            ("edit", "Edit"),
+                            ("alert", "Alert"),
+                            ("reminder", "Reminder"),
+                            ("update", "Update"),
                         ],
-                        default="read",
+                        default="update",
                         max_length=100,
                     ),
                 ),
                 (
-                    "created_by",
+                    "preference",
+                    models.CharField(
+                        choices=[("email", "Email"), ("app", "App"), ("sms", "SMS")],
+                        default="app",
+                        max_length=100,
+                    ),
+                ),
+                (
+                    "recipient",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="created_documents",
+                        related_name="notifications",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
-                    "shared_with",
-                    models.ManyToManyField(
+                    "related_project",
+                    models.ForeignKey(
                         blank=True,
-                        related_name="shared_documents",
-                        to=settings.AUTH_USER_MODEL,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="projects.project",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Document",
-                "verbose_name_plural": "Documents",
-                "ordering": ["-creation_date", "title"],
+                "verbose_name": "Notification",
+                "verbose_name_plural": "Notifications",
+                "ordering": ["-created_at"],
             },
         ),
     ]

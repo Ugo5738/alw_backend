@@ -75,7 +75,7 @@ gauth_urlpatterns = [
     path("google-login/", accounts_views.GoogleLogin.as_view(), name="google-login"),
     path("oauth2callback/", accounts_views.oauth2callback, name="oauth2callback"),
     path(
-        "notifications/google/",
+        "google/notifications/",
         accounts_views.google_notification,
         name="google-notification",
     ),

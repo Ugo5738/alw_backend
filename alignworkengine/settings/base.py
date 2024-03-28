@@ -221,15 +221,19 @@ os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 ZOOM_ACCOUNT_ID = config("ZOOM_ACCOUNT_ID")
 ZOOM_CLIENT_ID = config("ZOOM_CLIENT_ID")
 ZOOM_CLIENT_SECRET = config("ZOOM_CLIENT_SECRET")
+
+# ==> GOOGLE CALENDAR
+GOOGLE_WEBHOOK_URL = config("GOOGLE_WEBHOOK_URL")
+
 # ================================ CUSTOM VARIABLES =======================================
 
 
 # ================================ DJANGO COUNTRIES CUSTOM CONFIG FOR DJANGO 5x =======================================
-from django_countries.widgets import LazyChoicesMixin
+# from django_countries.widgets import LazyChoicesMixin
 
-LazyChoicesMixin.get_choices = lambda self: self._choices
-LazyChoicesMixin.choices = property(
-    LazyChoicesMixin.get_choices, LazyChoicesMixin.set_choices
-)
+# LazyChoicesMixin.get_choices = lambda self: self._choices
+# LazyChoicesMixin.choices = property(
+#     LazyChoicesMixin.get_choices, LazyChoicesMixin.set_choices
+# )
 
 # ================================ DJANGO COUNTRIES CUSTOM CONFIG FOR DJANGO 5x =======================================
