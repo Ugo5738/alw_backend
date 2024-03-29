@@ -22,8 +22,11 @@ COPY . /code/
 # RUN pip install -r requirements.txt
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# # Collect static files
-# RUN python manage.py collectstatic --noinput
+# Give execute permissions to the entrypoint script
+RUN chmod +x /code/entrypoint.sh
+
+# Set the entrypoint script to be executed
+ENTRYPOINT ["/code/entrypoint.sh"]
 
 # Run the application
 # CMD ["daphne", "alignworkengine.asgi:application", "--port", "$PORT", "--bind", "0.0.0.0"]
