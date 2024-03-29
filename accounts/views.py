@@ -159,220 +159,233 @@ def google_notification(request):
 
 
 # ========================== GOOGLE AUTHENTICATION ==========================
-{
-    "kind": "calendar#events",
-    "etag": '"p32sc94n4huc8a0o"',
-    "summary": "iamwriterkoda@gmail.com",
-    "description": "",
-    "updated": "2024-03-28T23:36:03.091Z",
-    "timeZone": "Africa/Lagos",
-    "accessRole": "owner",
-    "defaultReminders": [{"method": "popup", "minutes": 30}],
-    "nextSyncToken": "CLjEkuSPmIUDELjEkuSPmIUDGAUgmfaApwIomfaApwI=",
-    "items": [
-        {
-            "kind": "calendar#event",
-            "etag": '"3418653390502000"',
-            "id": "2lgsbt2cbqjg2piltkfq5cmn4d",
-            "status": "confirmed",
-            "htmlLink": "https://www.google.com/calendar/event?eid=Mmxnc2J0MmNicWpnMnBpbHRrZnE1Y21uNGQgaWFtd3JpdGVya29kYUBt",
-            "created": "2024-03-01T20:58:15.000Z",
-            "updated": "2024-03-01T20:58:15.251Z",
-            "summary": "meet with tribe",
-            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "start": {
-                "dateTime": "2024-03-01T22:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "end": {
-                "dateTime": "2024-03-01T23:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "iCalUID": "2lgsbt2cbqjg2piltkfq5cmn4d@google.com",
-            "sequence": 0,
-            "hangoutLink": "https://meet.google.com/iwe-nnoz-hmo",
-            "conferenceData": {
-                "entryPoints": [
-                    {
-                        "entryPointType": "video",
-                        "uri": "https://meet.google.com/iwe-nnoz-hmo",
-                        "label": "meet.google.com/iwe-nnoz-hmo",
-                    }
-                ],
-                "conferenceSolution": {
-                    "key": {"type": "hangoutsMeet"},
-                    "name": "Google Meet",
-                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
-                },
-                "conferenceId": "iwe-nnoz-hmo",
-            },
-            "reminders": {"useDefault": True},
-            "eventType": "default",
-        },
-        {
-            "kind": "calendar#event",
-            "etag": '"3419337092412000"',
-            "id": "5h40bdf0unj2q6l2b4eee45lp0",
-            "status": "confirmed",
-            "htmlLink": "https://www.google.com/calendar/event?eid=NWg0MGJkZjB1bmoycTZsMmI0ZWVlNDVscDAgaWFtd3JpdGVya29kYUBt",
-            "created": "2024-03-05T18:47:10.000Z",
-            "updated": "2024-03-05T19:55:46.206Z",
-            "summary": "Tribe",
-            "description": "checking",
-            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "start": {
-                "dateTime": "2024-03-05T20:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "end": {
-                "dateTime": "2024-03-05T21:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "iCalUID": "5h40bdf0unj2q6l2b4eee45lp0@google.com",
-            "sequence": 0,
-            "hangoutLink": "https://meet.google.com/vxo-homi-kvx",
-            "conferenceData": {
-                "entryPoints": [
-                    {
-                        "entryPointType": "video",
-                        "uri": "https://meet.google.com/vxo-homi-kvx",
-                        "label": "meet.google.com/vxo-homi-kvx",
-                    }
-                ],
-                "conferenceSolution": {
-                    "key": {"type": "hangoutsMeet"},
-                    "name": "Google Meet",
-                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
-                },
-                "conferenceId": "vxo-homi-kvx",
-            },
-            "reminders": {"useDefault": True},
-            "eventType": "default",
-        },
-        {
-            "kind": "calendar#event",
-            "etag": '"3419474868164000"',
-            "id": "1c37er6qb92f4185f4hvtfnuik",
-            "status": "confirmed",
-            "htmlLink": "https://www.google.com/calendar/event?eid=MWMzN2VyNnFiOTJmNDE4NWY0aHZ0Zm51aWsgaWFtd3JpdGVya29kYUBt",
-            "created": "2024-03-06T15:03:54.000Z",
-            "updated": "2024-03-06T15:03:54.082Z",
-            "summary": "Tribe",
-            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "start": {
-                "dateTime": "2024-03-06T16:30:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "end": {
-                "dateTime": "2024-03-06T17:30:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "iCalUID": "1c37er6qb92f4185f4hvtfnuik@google.com",
-            "sequence": 0,
-            "hangoutLink": "https://meet.google.com/eau-nhyj-keq",
-            "conferenceData": {
-                "entryPoints": [
-                    {
-                        "entryPointType": "video",
-                        "uri": "https://meet.google.com/eau-nhyj-keq",
-                        "label": "meet.google.com/eau-nhyj-keq",
-                    }
-                ],
-                "conferenceSolution": {
-                    "key": {"type": "hangoutsMeet"},
-                    "name": "Google Meet",
-                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
-                },
-                "conferenceId": "eau-nhyj-keq",
-            },
-            "reminders": {"useDefault": True},
-            "eventType": "default",
-        },
-        {
-            "kind": "calendar#event",
-            "etag": '"3422416205052000"',
-            "id": "6hfu6imnk23ej8p76uvs6sogr2",
-            "status": "confirmed",
-            "htmlLink": "https://www.google.com/calendar/event?eid=NmhmdTZpbW5rMjNlajhwNzZ1dnM2c29ncjIgaWFtd3JpdGVya29kYUBt",
-            "created": "2024-03-23T15:35:02.000Z",
-            "updated": "2024-03-23T15:35:02.526Z",
-            "summary": "alignwork test",
-            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "start": {
-                "dateTime": "2024-03-23T17:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "end": {
-                "dateTime": "2024-03-23T18:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "iCalUID": "6hfu6imnk23ej8p76uvs6sogr2@google.com",
-            "sequence": 0,
-            "hangoutLink": "https://meet.google.com/snu-zved-swi",
-            "conferenceData": {
-                "entryPoints": [
-                    {
-                        "entryPointType": "video",
-                        "uri": "https://meet.google.com/snu-zved-swi",
-                        "label": "meet.google.com/snu-zved-swi",
-                    }
-                ],
-                "conferenceSolution": {
-                    "key": {"type": "hangoutsMeet"},
-                    "name": "Google Meet",
-                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
-                },
-                "conferenceId": "snu-zved-swi",
-            },
-            "reminders": {"useDefault": True},
-            "eventType": "default",
-        },
-        {
-            "kind": "calendar#event",
-            "etag": '"3423337926182000"',
-            "id": "6palrc0e234mvloubibptor3vr",
-            "status": "confirmed",
-            "htmlLink": "https://www.google.com/calendar/event?eid=NnBhbHJjMGUyMzRtdmxvdWJpYnB0b3IzdnIgaWFtd3JpdGVya29kYUBt",
-            "created": "2024-03-28T23:36:03.000Z",
-            "updated": "2024-03-28T23:36:03.091Z",
-            "summary": "dds",
-            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
-            "start": {
-                "dateTime": "2024-03-29T01:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "end": {
-                "dateTime": "2024-03-29T02:00:00+01:00",
-                "timeZone": "Africa/Lagos",
-            },
-            "iCalUID": "6palrc0e234mvloubibptor3vr@google.com",
-            "sequence": 0,
-            "hangoutLink": "https://meet.google.com/vng-ugzr-iyt",
-            "conferenceData": {
-                "entryPoints": [
-                    {
-                        "entryPointType": "video",
-                        "uri": "https://meet.google.com/vng-ugzr-iyt",
-                        "label": "meet.google.com/vng-ugzr-iyt",
-                    }
-                ],
-                "conferenceSolution": {
-                    "key": {"type": "hangoutsMeet"},
-                    "name": "Google Meet",
-                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
-                },
-                "conferenceId": "vng-ugzr-iyt",
-            },
-            "reminders": {"useDefault": True},
-            "eventType": "default",
-        },
-    ],
-}
+# {
+#     "kind": "calendar#events",
+#     "etag": '"p32sc94n4huc8a0o"',
+#     "summary": "iamwriterkoda@gmail.com",
+#     "description": "",
+#     "updated": "2024-03-28T23:36:03.091Z",
+#     "timeZone": "Africa/Lagos",
+#     "accessRole": "owner",
+#     "defaultReminders": [{"method": "popup", "minutes": 30}],
+#     "nextSyncToken": "CLjEkuSPmIUDELjEkuSPmIUDGAUgmfaApwIomfaApwI=",
+#     "items": [
+#         {
+#             "kind": "calendar#event",
+#             "etag": '"3418653390502000"',
+#             "id": "2lgsbt2cbqjg2piltkfq5cmn4d",
+#             "status": "confirmed",
+#             "htmlLink": "https://www.google.com/calendar/event?eid=Mmxnc2J0MmNicWpnMnBpbHRrZnE1Y21uNGQgaWFtd3JpdGVya29kYUBt",
+#             "created": "2024-03-01T20:58:15.000Z",
+#             "updated": "2024-03-01T20:58:15.251Z",
+#             "summary": "meet with tribe",
+#             "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "start": {
+#                 "dateTime": "2024-03-01T22:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "end": {
+#                 "dateTime": "2024-03-01T23:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "iCalUID": "2lgsbt2cbqjg2piltkfq5cmn4d@google.com",
+#             "sequence": 0,
+#             "hangoutLink": "https://meet.google.com/iwe-nnoz-hmo",
+#             "conferenceData": {
+#                 "entryPoints": [
+#                     {
+#                         "entryPointType": "video",
+#                         "uri": "https://meet.google.com/iwe-nnoz-hmo",
+#                         "label": "meet.google.com/iwe-nnoz-hmo",
+#                     }
+#                 ],
+#                 "conferenceSolution": {
+#                     "key": {"type": "hangoutsMeet"},
+#                     "name": "Google Meet",
+#                     "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+#                 },
+#                 "conferenceId": "iwe-nnoz-hmo",
+#             },
+#             "reminders": {"useDefault": True},
+#             "eventType": "default",
+#         },
+#         {
+#             "kind": "calendar#event",
+#             "etag": '"3419337092412000"',
+#             "id": "5h40bdf0unj2q6l2b4eee45lp0",
+#             "status": "confirmed",
+#             "htmlLink": "https://www.google.com/calendar/event?eid=NWg0MGJkZjB1bmoycTZsMmI0ZWVlNDVscDAgaWFtd3JpdGVya29kYUBt",
+#             "created": "2024-03-05T18:47:10.000Z",
+#             "updated": "2024-03-05T19:55:46.206Z",
+#             "summary": "Tribe",
+#             "description": "checking",
+#             "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "start": {
+#                 "dateTime": "2024-03-05T20:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "end": {
+#                 "dateTime": "2024-03-05T21:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "iCalUID": "5h40bdf0unj2q6l2b4eee45lp0@google.com",
+#             "sequence": 0,
+#             "hangoutLink": "https://meet.google.com/vxo-homi-kvx",
+#             "conferenceData": {
+#                 "entryPoints": [
+#                     {
+#                         "entryPointType": "video",
+#                         "uri": "https://meet.google.com/vxo-homi-kvx",
+#                         "label": "meet.google.com/vxo-homi-kvx",
+#                     }
+#                 ],
+#                 "conferenceSolution": {
+#                     "key": {"type": "hangoutsMeet"},
+#                     "name": "Google Meet",
+#                     "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+#                 },
+#                 "conferenceId": "vxo-homi-kvx",
+#             },
+#             "reminders": {"useDefault": True},
+#             "eventType": "default",
+#         },
+#         {
+#             "kind": "calendar#event",
+#             "etag": '"3419474868164000"',
+#             "id": "1c37er6qb92f4185f4hvtfnuik",
+#             "status": "confirmed",
+#             "htmlLink": "https://www.google.com/calendar/event?eid=MWMzN2VyNnFiOTJmNDE4NWY0aHZ0Zm51aWsgaWFtd3JpdGVya29kYUBt",
+#             "created": "2024-03-06T15:03:54.000Z",
+#             "updated": "2024-03-06T15:03:54.082Z",
+#             "summary": "Tribe",
+#             "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "start": {
+#                 "dateTime": "2024-03-06T16:30:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "end": {
+#                 "dateTime": "2024-03-06T17:30:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "iCalUID": "1c37er6qb92f4185f4hvtfnuik@google.com",
+#             "sequence": 0,
+#             "hangoutLink": "https://meet.google.com/eau-nhyj-keq",
+#             "conferenceData": {
+#                 "entryPoints": [
+#                     {
+#                         "entryPointType": "video",
+#                         "uri": "https://meet.google.com/eau-nhyj-keq",
+#                         "label": "meet.google.com/eau-nhyj-keq",
+#                     }
+#                 ],
+#                 "conferenceSolution": {
+#                     "key": {"type": "hangoutsMeet"},
+#                     "name": "Google Meet",
+#                     "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+#                 },
+#                 "conferenceId": "eau-nhyj-keq",
+#             },
+#             "reminders": {"useDefault": True},
+#             "eventType": "default",
+#         },
+#         {
+#             "kind": "calendar#event",
+#             "etag": '"3422416205052000"',
+#             "id": "6hfu6imnk23ej8p76uvs6sogr2",
+#             "status": "confirmed",
+#             "htmlLink": "https://www.google.com/calendar/event?eid=NmhmdTZpbW5rMjNlajhwNzZ1dnM2c29ncjIgaWFtd3JpdGVya29kYUBt",
+#             "created": "2024-03-23T15:35:02.000Z",
+#             "updated": "2024-03-23T15:35:02.526Z",
+#             "summary": "alignwork test",
+#             "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "start": {
+#                 "dateTime": "2024-03-23T17:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "end": {
+#                 "dateTime": "2024-03-23T18:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "iCalUID": "6hfu6imnk23ej8p76uvs6sogr2@google.com",
+#             "sequence": 0,
+#             "hangoutLink": "https://meet.google.com/snu-zved-swi",
+#             "conferenceData": {
+#                 "entryPoints": [
+#                     {
+#                         "entryPointType": "video",
+#                         "uri": "https://meet.google.com/snu-zved-swi",
+#                         "label": "meet.google.com/snu-zved-swi",
+#                     }
+#                 ],
+#                 "conferenceSolution": {
+#                     "key": {"type": "hangoutsMeet"},
+#                     "name": "Google Meet",
+#                     "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+#                 },
+#                 "conferenceId": "snu-zved-swi",
+#             },
+#             "reminders": {"useDefault": True},
+#             "eventType": "default",
+#         },
+#         {
+#             "kind": "calendar#event",
+#             "etag": '"3423337926182000"',
+#             "id": "6palrc0e234mvloubibptor3vr",
+#             "status": "confirmed",
+#             "htmlLink": "https://www.google.com/calendar/event?eid=NnBhbHJjMGUyMzRtdmxvdWJpYnB0b3IzdnIgaWFtd3JpdGVya29kYUBt",
+#             "created": "2024-03-28T23:36:03.000Z",
+#             "updated": "2024-03-28T23:36:03.091Z",
+#             "summary": "dds",
+#             "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+#             "start": {
+#                 "dateTime": "2024-03-29T01:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "end": {
+#                 "dateTime": "2024-03-29T02:00:00+01:00",
+#                 "timeZone": "Africa/Lagos",
+#             },
+#             "iCalUID": "6palrc0e234mvloubibptor3vr@google.com",
+#             "sequence": 0,
+#             "hangoutLink": "https://meet.google.com/vng-ugzr-iyt",
+#             "conferenceData": {
+#                 "entryPoints": [
+#                     {
+#                         "entryPointType": "video",
+#                         "uri": "https://meet.google.com/vng-ugzr-iyt",
+#                         "label": "meet.google.com/vng-ugzr-iyt",
+#                     }
+#                 ],
+#                 "conferenceSolution": {
+#                     "key": {"type": "hangoutsMeet"},
+#                     "name": "Google Meet",
+#                     "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+#                 },
+#                 "conferenceId": "vng-ugzr-iyt",
+#             },
+#             "reminders": {"useDefault": True},
+#             "eventType": "default",
+#         },
+#     ],
+# }
+
+# # Process the request to extract the notification
+#     notification = extract_notification(request)
+
+#     # Send notification to the channel layer
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "notification_group",  # Group name, ensure the user is added to this group
+#         {
+#             "type": "send_notification",
+#             "message": notification,
+#         }
+#     )
 
 
 class RegisterAPIView(GenericAPIView):
