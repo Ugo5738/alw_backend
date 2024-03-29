@@ -223,8 +223,16 @@ ZOOM_CLIENT_ID = config("ZOOM_CLIENT_ID")
 ZOOM_CLIENT_SECRET = config("ZOOM_CLIENT_SECRET")
 
 # ==> GOOGLE CALENDAR
-GOOGLE_WEBHOOK_URL = config("GOOGLE_WEBHOOK_URL")
+GOOGLE_NOTIFICATION_WEBHOOK_URL = config("GOOGLE_NOTIFICATION_WEBHOOK_URL")
 
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = "keys/gauth/secrets/cal_api_client_secret.json"
+GOOGLE_OAUTH2_SCOPES = [
+    "https://www.googleapis.com/auth/calendar.readonly",
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/calendar.events",
+    "https://www.googleapis.com/auth/calendar.events.readonly",
+]
+GOOGLE_OAUTH2_REDIRECT_URI = "http://localhost:8000/oauth2callback"
 # ================================ CUSTOM VARIABLES =======================================
 
 

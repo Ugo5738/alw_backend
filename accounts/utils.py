@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime, timedelta
 
 import pytz
-import requests
 from django.conf import settings
 from django.utils import timezone
 from google.auth.transport.requests import Request
@@ -17,55 +16,60 @@ logger = configure_logger(__name__)
 
 
 def refresh_google_credentials(user):
-    credentials = GoogleCredentials.objects.get(user=user)
-    creds = Credentials(
-        token=credentials.access_token,
-        refresh_token=credentials.refresh_token,
-        token_uri=credentials.token_uri,
-        client_id=credentials.client_id,
-        client_secret=credentials.client_secret,
-        scopes=credentials.scopes.split(","),
-    )
+    try:
+        credentials = GoogleCredentials.objects.get(user=user)
+        creds = Credentials(
+            token=credentials.access_token,
+            refresh_token=credentials.refresh_token,
+            token_uri=credentials.token_uri,
+            client_id=credentials.client_id,
+            client_secret=credentials.client_secret,
+            scopes=credentials.scopes.split(","),
+        )
 
-    if creds.valid:
-        return creds  # No need to refresh or save
+        if creds.expired and creds.refresh_token:
+            logger.info("Refreshing Expired Credentials...")
+            creds.refresh(Request())
 
-    if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-        # Adjust to use Django's timezone.now()
-        token_expiry_time = timezone.now() + datetime.timedelta(seconds=creds.expiry)
+            token_expiry_time = timezone.now() + timedelta(seconds=creds.expiry)
 
-        # Update the stored credentials
-        credentials.access_token = creds.token
-        credentials.refresh_token = (
-            creds.refresh_token
-        )  # Usually unchanged, but refreshed for safety
-        credentials.token_expiry = token_expiry_time
-        credentials.save()
+            credentials.access_token = creds.token
+            credentials.refresh_token = creds.refresh_token  # Usually unchanged
+            credentials.token_expiry = creds.expiry
+            credentials.save()
 
-    return creds
+        return creds
+    except GoogleCredentials.DoesNotExist:
+        logger.error(f"GoogleCredentials does not exist for user: {user.email}")
+        return None
 
 
 def get_google_calendar_service(user):
     credentials = refresh_google_credentials(user)
-    service = build("calendar", "v3", credentials=credentials)
-    return service
-
-
-all_events = []
+    if credentials:
+        service = build("calendar", "v3", credentials=credentials)
+        return service
+    return None
 
 
 def create_user_webhook_subscription(user):
-    credentials = GoogleCredentials.objects.get(user=user)
-
     service = get_google_calendar_service(user)
+    if not service:
+        logger.error(f"Failed to create Google Calendar service for user: {user.email}")
+        return
+
+    # Check for existing active subscription
+    now = timezone.now()
+    existing_channel = GoogleCalendarChannel.objects.filter(
+        user=user, expiration__gt=now
+    ).first()
+
     channel_id = str(uuid.uuid4())
     verification_token = str(uuid.uuid4())
-    # auth_token = credentials.access_token
-    calendar_id = user.email
-    webhook_url = settings.GOOGLE_WEBHOOK_URL
+    webhook_url = settings.GOOGLE_NOTIFICATION_WEBHOOK_URL
+    calendar_id = user.email  # "primary"
 
-    expiration_date = datetime.now() + timedelta(days=1)
+    expiration_date = now + timedelta(days=1)  # Adjust the duration as needed
     expiration_timestamp = int(expiration_date.timestamp() * 1000)
 
     body = {
@@ -73,31 +77,37 @@ def create_user_webhook_subscription(user):
         "type": "web_hook",
         "address": webhook_url,
         "token": verification_token,
-        "expiration": expiration_timestamp,  # Optional: 7 days from now in milliseconds
+        "expiration": expiration_timestamp,
     }
 
-    calendar_id = "primary"  # or the specific calendar ID you want to watch
-    channel = service.events().watch(calendarId=calendar_id, body=body).execute()
-
-    if channel:
-        logger.info("Channel created successfully:", channel)
-
-        expiration_timestamp = (
-            int(channel["expiration"]) / 1000
-        )  # Convert from milliseconds to seconds
-        expiration_datetime = datetime.fromtimestamp(expiration_timestamp, pytz.utc)
-
-        GoogleCalendarChannel.objects.create(
-            user=user,
-            channel_id=channel_id,
-            resource_id=channel["resourceId"],
-            verification_token=verification_token,
-            expiration=expiration_datetime,
-            resource_uri=channel["resourceUri"],
+    try:
+        channel = service.events().watch(calendarId=calendar_id, body=body).execute()
+        expiration_datetime = datetime.fromtimestamp(
+            int(channel["expiration"]) / 1000, pytz.utc
         )
-        # Handle any further logic, like notifying the user of successful setup
-    else:
-        logger.info("Failed to create channel")
+        for key, value in channel.items():
+            print(key, value)
+        if existing_channel:
+            # Update the existing channel instead of creating a new one
+            existing_channel.channel_id = channel_id
+            existing_channel.resource_id = channel["resourceId"]
+            existing_channel.verification_token = verification_token
+            existing_channel.expiration = expiration_datetime
+            existing_channel.resource_uri = channel["resourceUri"]
+            existing_channel.save()
+            logger.info(f"Updated existing channel for user: {user.email}.")
+        else:
+            GoogleCalendarChannel.objects.create(
+                user=user,
+                channel_id=channel_id,
+                resource_id=channel["resourceId"],
+                verification_token=verification_token,
+                expiration=expiration_datetime,
+                resource_uri=channel["resourceUri"],
+            )
+            logger.info(f"Webhook subscription channel created for user: {user.email}.")
+    except Exception as e:
+        logger.error(f"Failed to create or update channel for user {user.email}: {e}")
 
 
 def get_user_from_channel_id(channel_id):

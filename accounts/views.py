@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 import jwt
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -16,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.google_auth import exchange_code, generate_auth_url
+from accounts.google_auth import GoogleAuthService
 from accounts.models import GoogleCredentials, User
 from accounts.pagination import CustomPageNumberPagination
 from accounts.serializers import (
@@ -38,13 +40,15 @@ logger = configure_logger(__name__)
 # View to redirect user to Google's OAuth 2.0 server
 class GoogleLogin(LoginRequiredMixin, APIView):
     def get(self, request, *args, **kwargs):
-        authorization_url = generate_auth_url(request)
+        service = GoogleAuthService(request)
+        authorization_url = service.generate_auth_url()
         return redirect(authorization_url)
 
 
 # View to handle the OAuth 2.0 server response
 def oauth2callback(request):
-    credentials = exchange_code(request)
+    service = GoogleAuthService(request)
+    credentials = service.exchange_code()
 
     # Assuming the user is already authenticated and available in the session
     user = request.user
@@ -75,7 +79,7 @@ def oauth2callback(request):
 
 
 @csrf_exempt
-@require_POST  # Ensure that this view only accepts POST requests
+@require_POST
 def google_notification(request):
     # Extracting Google Calendar API notification headers
     channel_id = request.headers.get("X-Goog-Channel-ID")
@@ -84,36 +88,291 @@ def google_notification(request):
     resource_id = request.headers.get("X-Goog-Resource-ID")
     resource_uri = request.headers.get("X-Goog-Resource-URI")
 
-    # Optionally, log the received information for debugging
+    # Logging received information
     logger.info(
-        f"Received notification - Channel ID: {channel_id}, State: {resource_state}, "
-        f"Message Number: {message_number}, Resource ID: {resource_id}, Resource URI: {resource_uri}"
+        f"Received Google Calendar notification - Channel ID: {channel_id}, "
+        f"Resource State: {resource_state}, Message Number: {message_number}, "
+        f"Resource ID: {resource_id}, Resource URI: {resource_uri}"
     )
 
-    # Fetch the event details if the notification indicates a change in a specific event
-    if resource_state in ["sync", "exists"]:
-        # Assume you have a function to get the user associated with this channel
-        user = get_user_from_channel_id(channel_id)
-        if user:
-            service = get_google_calendar_service(user)
-            # The actual ID of the calendar, 'primary' is used for the primary calendar of an account
-            calendar_id = user.email  # "primary"
-            try:
-                event = (
-                    service.events()
-                    .get(calendarId=calendar_id, eventId=resource_id)
-                    .execute()
+    user = get_user_from_channel_id(channel_id)
+    if not user:
+        logger.warning(
+            f"No user found for Channel ID: {channel_id}. Unable to process notification."
+        )
+        return HttpResponse(status=200)
+
+    service = get_google_calendar_service(user)
+
+    if resource_state == "exists":
+        # Handle updated or newly created events
+        # Note: Determining if an event is new or updated might require additional logic
+        try:
+            # Using timezone-aware datetime object for the current UTC time
+            time_min = datetime.now(timezone.utc) - timedelta(minutes=1)
+            time_min = time_min.isoformat()
+
+            events_result = (
+                service.events()
+                .list(
+                    calendarId=user.email,
+                    timeMin=time_min,
+                    singleEvents=True,
+                    orderBy="startTime",
                 )
-                print("Event details:", event)
-                # Process the event details as needed
-            except Exception as e:
-                print("Error fetching event details:", str(e))
-                # Handle errors (e.g., event not found or API error)
+                .execute()
+            )
+
+            events = events_result.get("items", [])
+
+            if events:
+                for event in events:
+                    # Process each event as needed. You might need additional logic to find the correct event.
+                    print(event)
+                    logger.info(
+                        f"Event found: {event.get('summary', 'No summary')} at {event['start'].get('dateTime', event['start'].get('date'))}"
+                    )
+                    # Here, implement your logic to send a pop-up message based on the event details
+
+            else:
+                logger.info("No recent events found.")
+        except Exception as e:
+            logger.error(f"Error fetching event details: {e}")
+
+    elif resource_state == "not_exists":
+        # Handle deletions
+        logger.info(f"An event was deleted. Resource ID: {resource_id}")
+        # Add logic for handling deletions (e.g., update your application state, notify the user)
+
+    elif resource_state == "sync":
+        # Handle initial sync
+        logger.info("Initial sync notification received.")
+        # Add logic if needed for handling initial syncs
+
+    else:
+        # Handle other types of notifications or unknown resource_state
+        logger.info(
+            f"Received notification with unhandled resource state '{resource_state}'"
+        )
 
     return HttpResponse(status=200)
 
 
 # ========================== GOOGLE AUTHENTICATION ==========================
+{
+    "kind": "calendar#events",
+    "etag": '"p32sc94n4huc8a0o"',
+    "summary": "iamwriterkoda@gmail.com",
+    "description": "",
+    "updated": "2024-03-28T23:36:03.091Z",
+    "timeZone": "Africa/Lagos",
+    "accessRole": "owner",
+    "defaultReminders": [{"method": "popup", "minutes": 30}],
+    "nextSyncToken": "CLjEkuSPmIUDELjEkuSPmIUDGAUgmfaApwIomfaApwI=",
+    "items": [
+        {
+            "kind": "calendar#event",
+            "etag": '"3418653390502000"',
+            "id": "2lgsbt2cbqjg2piltkfq5cmn4d",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=Mmxnc2J0MmNicWpnMnBpbHRrZnE1Y21uNGQgaWFtd3JpdGVya29kYUBt",
+            "created": "2024-03-01T20:58:15.000Z",
+            "updated": "2024-03-01T20:58:15.251Z",
+            "summary": "meet with tribe",
+            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "start": {
+                "dateTime": "2024-03-01T22:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "end": {
+                "dateTime": "2024-03-01T23:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "iCalUID": "2lgsbt2cbqjg2piltkfq5cmn4d@google.com",
+            "sequence": 0,
+            "hangoutLink": "https://meet.google.com/iwe-nnoz-hmo",
+            "conferenceData": {
+                "entryPoints": [
+                    {
+                        "entryPointType": "video",
+                        "uri": "https://meet.google.com/iwe-nnoz-hmo",
+                        "label": "meet.google.com/iwe-nnoz-hmo",
+                    }
+                ],
+                "conferenceSolution": {
+                    "key": {"type": "hangoutsMeet"},
+                    "name": "Google Meet",
+                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+                },
+                "conferenceId": "iwe-nnoz-hmo",
+            },
+            "reminders": {"useDefault": True},
+            "eventType": "default",
+        },
+        {
+            "kind": "calendar#event",
+            "etag": '"3419337092412000"',
+            "id": "5h40bdf0unj2q6l2b4eee45lp0",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=NWg0MGJkZjB1bmoycTZsMmI0ZWVlNDVscDAgaWFtd3JpdGVya29kYUBt",
+            "created": "2024-03-05T18:47:10.000Z",
+            "updated": "2024-03-05T19:55:46.206Z",
+            "summary": "Tribe",
+            "description": "checking",
+            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "start": {
+                "dateTime": "2024-03-05T20:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "end": {
+                "dateTime": "2024-03-05T21:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "iCalUID": "5h40bdf0unj2q6l2b4eee45lp0@google.com",
+            "sequence": 0,
+            "hangoutLink": "https://meet.google.com/vxo-homi-kvx",
+            "conferenceData": {
+                "entryPoints": [
+                    {
+                        "entryPointType": "video",
+                        "uri": "https://meet.google.com/vxo-homi-kvx",
+                        "label": "meet.google.com/vxo-homi-kvx",
+                    }
+                ],
+                "conferenceSolution": {
+                    "key": {"type": "hangoutsMeet"},
+                    "name": "Google Meet",
+                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+                },
+                "conferenceId": "vxo-homi-kvx",
+            },
+            "reminders": {"useDefault": True},
+            "eventType": "default",
+        },
+        {
+            "kind": "calendar#event",
+            "etag": '"3419474868164000"',
+            "id": "1c37er6qb92f4185f4hvtfnuik",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=MWMzN2VyNnFiOTJmNDE4NWY0aHZ0Zm51aWsgaWFtd3JpdGVya29kYUBt",
+            "created": "2024-03-06T15:03:54.000Z",
+            "updated": "2024-03-06T15:03:54.082Z",
+            "summary": "Tribe",
+            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "start": {
+                "dateTime": "2024-03-06T16:30:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "end": {
+                "dateTime": "2024-03-06T17:30:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "iCalUID": "1c37er6qb92f4185f4hvtfnuik@google.com",
+            "sequence": 0,
+            "hangoutLink": "https://meet.google.com/eau-nhyj-keq",
+            "conferenceData": {
+                "entryPoints": [
+                    {
+                        "entryPointType": "video",
+                        "uri": "https://meet.google.com/eau-nhyj-keq",
+                        "label": "meet.google.com/eau-nhyj-keq",
+                    }
+                ],
+                "conferenceSolution": {
+                    "key": {"type": "hangoutsMeet"},
+                    "name": "Google Meet",
+                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+                },
+                "conferenceId": "eau-nhyj-keq",
+            },
+            "reminders": {"useDefault": True},
+            "eventType": "default",
+        },
+        {
+            "kind": "calendar#event",
+            "etag": '"3422416205052000"',
+            "id": "6hfu6imnk23ej8p76uvs6sogr2",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=NmhmdTZpbW5rMjNlajhwNzZ1dnM2c29ncjIgaWFtd3JpdGVya29kYUBt",
+            "created": "2024-03-23T15:35:02.000Z",
+            "updated": "2024-03-23T15:35:02.526Z",
+            "summary": "alignwork test",
+            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "start": {
+                "dateTime": "2024-03-23T17:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "end": {
+                "dateTime": "2024-03-23T18:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "iCalUID": "6hfu6imnk23ej8p76uvs6sogr2@google.com",
+            "sequence": 0,
+            "hangoutLink": "https://meet.google.com/snu-zved-swi",
+            "conferenceData": {
+                "entryPoints": [
+                    {
+                        "entryPointType": "video",
+                        "uri": "https://meet.google.com/snu-zved-swi",
+                        "label": "meet.google.com/snu-zved-swi",
+                    }
+                ],
+                "conferenceSolution": {
+                    "key": {"type": "hangoutsMeet"},
+                    "name": "Google Meet",
+                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+                },
+                "conferenceId": "snu-zved-swi",
+            },
+            "reminders": {"useDefault": True},
+            "eventType": "default",
+        },
+        {
+            "kind": "calendar#event",
+            "etag": '"3423337926182000"',
+            "id": "6palrc0e234mvloubibptor3vr",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=NnBhbHJjMGUyMzRtdmxvdWJpYnB0b3IzdnIgaWFtd3JpdGVya29kYUBt",
+            "created": "2024-03-28T23:36:03.000Z",
+            "updated": "2024-03-28T23:36:03.091Z",
+            "summary": "dds",
+            "creator": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "organizer": {"email": "iamwriterkoda@gmail.com", "self": True},
+            "start": {
+                "dateTime": "2024-03-29T01:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "end": {
+                "dateTime": "2024-03-29T02:00:00+01:00",
+                "timeZone": "Africa/Lagos",
+            },
+            "iCalUID": "6palrc0e234mvloubibptor3vr@google.com",
+            "sequence": 0,
+            "hangoutLink": "https://meet.google.com/vng-ugzr-iyt",
+            "conferenceData": {
+                "entryPoints": [
+                    {
+                        "entryPointType": "video",
+                        "uri": "https://meet.google.com/vng-ugzr-iyt",
+                        "label": "meet.google.com/vng-ugzr-iyt",
+                    }
+                ],
+                "conferenceSolution": {
+                    "key": {"type": "hangoutsMeet"},
+                    "name": "Google Meet",
+                    "iconUri": "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v6/web-512dp/logo_meet_2020q4_color_2x_web_512dp.png",
+                },
+                "conferenceId": "vng-ugzr-iyt",
+            },
+            "reminders": {"useDefault": True},
+            "eventType": "default",
+        },
+    ],
+}
 
 
 class RegisterAPIView(GenericAPIView):
