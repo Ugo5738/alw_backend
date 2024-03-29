@@ -1,5 +1,3 @@
-version: "3.9"  # Using version 3.9 for better feature support
-
 services:
   postgres:
     image: postgres:latest
@@ -8,7 +6,7 @@ services:
     environment:
       - POSTGRES_DB=alignworkengine_db
       - POSTGRES_USER=alignworkengine_dan 
-      - POSTGRES_PASSWORD=ai_@1st
+      - POSTGRES_PASSWORD=alw_@1st
     ports:
       - "5432:5432"
     container_name: alignworkengine_postgres
@@ -31,7 +29,7 @@ services:
     environment:
       - POSTGRES_DB=alignworkengine_db
       - POSTGRES_USER=alignworkengine_dan 
-      - POSTGRES_PASSWORD=ai_@1st
+      - POSTGRES_PASSWORD=alw_@1st
     container_name: alignworkengine_migration
 
   web:
@@ -48,7 +46,7 @@ services:
       - migration
       - redis
     environment:
-      - DATABASE_URL=postgres://alignworkengine_dan:ai_@1st@postgres:5432/alignworkengine_db
+      - DATABASE_URL=postgres://alignworkengine_dan:alw_@1st@postgres:5432/alignworkengine_db
     env_file:
       - .env
     container_name: alignworkengine_web
@@ -65,7 +63,7 @@ services:
       - migration
       - redis
     environment:
-      - DATABASE_URL=postgres://alignworkengine_dan:ai_@1st@postgres:5432/alignworkengine_db
+      - DATABASE_URL=postgres://alignworkengine_dan:alw_@1st@postgres:5432/alignworkengine_db
     container_name: alignworkengine_celery
 
   nginx:
