@@ -1,52 +1,52 @@
-# boto3
-# beautifulsoup4
-# bleach[css]
-# celery
-# channels
-# channels-redis
-# daphne
-# Django
-# django-cors-headers
-# django-countries
-# django-extensions
-# django-filter
-# django-on-heroku
-# django-rest-passwordreset
-# django-rest-swagger
-# django-storages
-# djangorestframework
-# djangorestframework-simplejwt
-# dj-database-url
-# # docx2pdf
-# drf-spectacular
-# drf-yasg
-# factory_boy
-# google-apps-meet
-# google-auth
-# google-auth-oauthlib
-# google-cloud-pubsub
-# google-cloud-storage
-# google-api-python-client
-# google-auth-httplib2
-# gunicorn
-# langchain
-# llama-index
-# markdown
-# numpy
-# openai
-# pandas
-# Pillow
-# pinecone-client
-# playwright
-# pyautogen
-# pymongo
-# pyspellchecker
-# python-decouple
-# python-dotenv
-# python-Levenshtein
-# scikit-learn
-# tabula-py
-# textblob
-# textstat
-# tiktoken
-# unstructured
+boto3
+beautifulsoup4
+bleach[css]
+celery
+channels
+channels-redis
+daphne
+Django
+django-cors-headers
+django-countries
+django-extensions
+django-filter
+django-on-heroku
+django-rest-passwordreset
+django-rest-swagger
+django-storages
+djangorestframework
+djangorestframework-simplejwt
+dj-database-url
+# docx2pdf
+drf-spectacular
+drf-yasg
+factory_boy
+google-apps-meet
+google-auth
+google-auth-oauthlib
+google-cloud-pubsub
+google-cloud-storage
+google-api-python-client
+google-auth-httplib2
+gunicorn
+langchain
+llama-index
+markdown
+numpy
+openai
+pandas
+Pillow
+pinecone-client
+playwright
+pyautogen
+pymongo
+pyspellchecker
+python-decouple
+python-dotenv
+python-Levenshtein
+scikit-learn
+tabula-py
+textblob
+textstat
+tiktoken
+unstructured

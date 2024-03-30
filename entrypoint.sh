@@ -15,6 +15,10 @@ case "$1" in
         # Call the wait function before attempting to access the database
         wait_for_postgres
 
+        # Run database makemigrations
+        echo "Running database makemigrations..."
+        python manage.py makemigrations --noinput
+
         # Run database migrations
         echo "Running database migrations..."
         python manage.py migrate --noinput
