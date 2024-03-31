@@ -1,49 +1,70 @@
-version: "3"
-
 services:
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # image: alignwork1/alw:latest
-    command: daphne alignworkengine.asgi:application -b 0.0.0.0 -p 8000
-    volumes:
-      - .:/code
-      - log_volume:/code/logs
-    depends_on:
-      - redis
-    container_name: alw_app
-
-  celery:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    # image: alignwork1/alw:latest
-    command: celery -A alignworkengine worker --loglevel=info
-    volumes:
-      - .:/code
-      - log_volume:/code/logs
-    depends_on:
-      - redis
-    container_name: alw_app_celery
-
-  redis:
-    image: redis:latest
-    volumes:
-      - redis_volume:/data
-    container_name: alw_app_redis
-  
   postgres:
     image: postgres:latest
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=alignworkengine_db
+      - POSTGRES_USER=alignworkengine_dan 
+      - POSTGRES_PASSWORD=alw_@1st
     ports:
       - "5432:5432"
-    container_name: alw_app_postgres
+    container_name: alignworkengine_postgres
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis_volume:/data
+    container_name: alignworkengine_redis
+  
+  migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["migrate"]
+    volumes:
+      - .:/code
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_DB=alignworkengine_db
+      - POSTGRES_USER=alignworkengine_dan 
+      - POSTGRES_PASSWORD=alw_@1st
+    container_name: alignworkengine_migration
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["web"]
+    volumes:
+      - .:/code
+      - log_volume:/code/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migration
+      - redis
+    environment:
+      - DATABASE_URL=postgres://alignworkengine_dan:alw_@1st@postgres:5432/alignworkengine_db
+    env_file:
+      - .env
+    container_name: alignworkengine_web
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["celery"]
+    volumes:
+      - .:/code
+      - log_volume:/code/logs
+    depends_on:
+      - migration
+      - redis
+    environment:
+      - DATABASE_URL=postgres://alignworkengine_dan:alw_@1st@postgres:5432/alignworkengine_db
+    container_name: alignworkengine_celery
 
   nginx:
     image: nginx:latest
@@ -58,12 +79,12 @@ services:
       # - media_volume:/media
     depends_on:
       - web
-    container_name: alw_app_nginx
+    container_name: alignworkengine_nginx
 
 volumes:
+  postgres_data:
   redis_volume:
   log_volume:
-  postgres_data:
   # Uncomment these if you are serving static/media files from the container
   # static_volume:
   # media_volume:
